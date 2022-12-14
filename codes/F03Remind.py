@@ -6,6 +6,7 @@ import numpy
 # 定时任务
 import schedule
 import time
+import os
 
 from wxauto import WeChat, WxUtils
 
@@ -132,8 +133,19 @@ def getOneWord():
     rq = requests.get("https://v1.hitokoto.cn/")
     return rq.json()["hitokoto"]
 
-####################################### 人民网截图 #######################################
+####################################### 长新闻截图 #######################################
+def request_download():
+    rq = requests.get("http://bjb.yunwj.top/php/tp/lj.php/")
+    IMAGE_URL = rq.json()["tp1"]
+    print(IMAGE_URL)
+    r = requests.get(IMAGE_URL)
+    os.makedirs('./output/', exist_ok=True)
+    with open('./output/allNews.png', 'wb') as f:
+        f.write(r.content)
+    print("下载完成")
+    wx.SendFiles('./output/allNews.png')
 
+####################################### 人民网截图 #######################################
 def sendScreenshotNews():
     from ScreenShot import getScreenshot
     wx.SendFiles(getScreenshot())
@@ -181,6 +193,7 @@ if __name__ == '__main__':
     schedule.every().day.at("07:31").do(sendScreenshotNews)
 
     ## 提醒为打卡
+    schedule.every().day.at("08:30").do(request_download)
     schedule.every().day.at("08:30").do(sendNoCheckInWarming)
 
     ## 提醒践行

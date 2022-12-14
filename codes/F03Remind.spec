@@ -8,7 +8,7 @@ a = Analysis(
     ['F03Remind.py', 'ScreenShot.py', 'ScreenWufazhuce.py'],
     pathex=[],
     binaries=[],
-    datas=[("./input/", "input")]
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
