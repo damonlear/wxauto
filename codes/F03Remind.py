@@ -224,12 +224,12 @@ if __name__ == '__main__':
             continue
 
     ## 提醒打卡 定时任务设置
-    schedule.every().day.at("07:30").do(sendCheckInTip)
-    schedule.every().day.at("07:31").do(sendScreenshotNews)
+    schedule.every().day.at("07:15").do(sendCheckInTip)
+    schedule.every().day.at("07:16").do(sendScreenshotNews)
 
     ## 提醒未打卡 定时任务设置
-    schedule.every().day.at("08:30").do(request_download)
-    schedule.every().day.at("08:31").do(sendNoCheckInWarming)
+    schedule.every().day.at("08:29").do(request_download)
+    schedule.every().day.at("08:30").do(sendNoCheckInWarming)
 
     ## 提醒践行 定时任务设置
     schedule.every().day.at("19:59:55").do(sendScreenshotOne)
