@@ -197,7 +197,6 @@ def sendScreenshotOne():
 if __name__ == '__main__':
     # 用来判断微信启动时，微信是否正常 但后续并没有再判断了
     while (True):
-        break
         try:
             # 校验selenium依赖是否正常运行
             from ScreenWufazhuce import getScreenshot
@@ -213,10 +212,10 @@ if __name__ == '__main__':
             ## 加tab避免卡顿导致的搜索失败
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat("文件传输助手")
+            go2TargeChat(WHO_USER)
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat("文件传输助手")
+            go2TargeChat(WHO_USER)
             break
         except Exception as e:
             print(e)
@@ -231,7 +230,6 @@ if __name__ == '__main__':
     ## 提醒未打卡 定时任务设置
     schedule.every().day.at("08:30").do(request_download)
     schedule.every().day.at("08:31").do(sendNoCheckInWarming)
-    # schedule.every(5).seconds.do(getlocalStrTime)
 
     ## 提醒践行 定时任务设置
     schedule.every().day.at("19:59:55").do(sendScreenshotOne)
