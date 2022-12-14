@@ -3,6 +3,7 @@
 
 block_cipher = None
 
+
 a = Analysis(
     ['F03Remind.py', 'ScreenShot.py', 'ScreenWufazhuce.py'],
     pathex=[],
