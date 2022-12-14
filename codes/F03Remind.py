@@ -7,9 +7,9 @@ import numpy
 import schedule
 import time
 import os
+import random
 
 from wxauto import WeChat, WxUtils
-
 
 # 日期格式化的格式
 date_format_default = '%Y-%m-%d'
@@ -29,30 +29,35 @@ allArray = {
     "周秀娟": "周秀娟",
     "李岳珉": "李岳珉",
     "李晓娟": "超凡308李晓娟",
-#    "肖娟": "",
+    #    "肖娟": "",
     "丘凤梅": "F10丘凤梅",
     "耿洁": "超凡03-11耿洁",
     "张碧芬": "超凡312张碧芬",
     "单文科": "单文科",
 }
 
+
 ####################################### 公共类 #######################################
 
 # 获取今天的日期对应的请求地址的链接
-def getlocalStrTime(formate = date_format_default):
+def getlocalStrTime(formate=date_format_default):
+    print("获取今天日期")
     times = time.time()
     local_time = time.localtime(times)
     local_strftime = time.strftime(formate, local_time)
     print("今天日期：{}".format(local_strftime))
     return local_strftime
 
+
 ####################################### 网络请求 #######################################
 # 获取日期对应的请求地址的链接
-def getQueryUrl(date = getlocalStrTime()):
+def getQueryUrl(date=getlocalStrTime()):
     return query_3_url.format(date)
+
 
 # 获取已打卡的人员名单的名字
 def requestQiandao(url):
+    print("请求链接{}".format(url))
     # 密码311
     cookies = {"rs_token_8R00JD": "00311"}
     page = requests.get(url
@@ -80,41 +85,52 @@ def requestQiandao(url):
         array.append(n)
 
     array.sort()
+    print("系统签到合计{}人：{}".format(len(array), array))
     return array
 
 
 ####################################### 微信请求 #######################################
-# 获取对话框
-def go2TargeChat(user = "共赴热爱F4 2.0"):
+# 获取对话框函数
+def go2TargeChat(user="共赴热爱F4 2.0"):
     wx.Search(user)
     print("搜索" + user)
 
-# 发送消息
-def sendSingleMessage(message = "亲爱的喜党"):
-    wx.SendMsg(message)
-    print("单行发送" + message)
 
-def sendMuteMessage(message = "亲爱的喜党"):
+# 发送单行消息函数
+def sendSingleMessage(message="亲爱的喜党"):
+    wx.SendMsg(message)
+    print("----单行发送----\r\n" + message)
+
+
+# 发送多行消息函数
+def sendMuteMessage(message="亲爱的喜党"):
     WxUtils.SetClipboard(message)
     wx.SendClipboard()
-    print("复制发送" + message)
+    print("----复制发送 多行发送----\r\n" + message)
+
 
 # 提醒没打卡
-def sendNoCheckInWarming():
+def sendNoCheckInWarming(isSendWechat=True):
     # 获取未打开的人员名单
-    clockInArrays = requestQiandao(getQueryUrl())
+    # TODO 不知道为什么python函数直接带函数时，作为参数的函数没有被调用
+    date = getlocalStrTime()
+    url = getQueryUrl(date)
+    clockInArrays = requestQiandao(url)
     ndarray = numpy.array(clockInArrays)
     notCheckIn = []
     for name in allArray.keys():
-       if((ndarray == name).any()):
-           print("{}已签到".format(name))
-       else:
-           notCheckIn.append("{} @{} ".format(name, allArray[name]))
-           print("WARMING！！！ {}未签到".format(name))
+        if len(ndarray) > 0 and (ndarray == name).any():
+            print("\t{}已签到".format(name))
+        else:
+            notCheckIn.append("{} @{} ".format(name, allArray[name]))
+            print("WARMING！！！ {}未签到".format(name))
 
-    sendMuteMessage("共赴热爱，感恩一路有你！\r\n忘记打卡的小伙伴记得打卡哦 : {}".format(','.join(str(i) for i in notCheckIn)))
+    if isSendWechat:
+        sendMuteMessage(
+            "共赴热爱，感恩一路有你！\r\n忘记打卡的小伙伴记得打卡哦 : {}".format(','.join(str(i) for i in notCheckIn)))
 
-# 提醒今天打卡
+
+# 发送提醒今天打卡链接
 def sendCheckInTip():
     f = open("./input/打卡链接", 'r', encoding='utf-8')
     lines = f.read()
@@ -122,16 +138,30 @@ def sendCheckInTip():
     print(lines)
     sendMuteMessage("今天是{}，没有记录就没有发生\r\n\r\n{}".format(getlocalStrTime(), lines))
 
-def sendWorkingTip():
-    sendMuteMessage("点赞")
 
+# 发送点赞文本
+def sendWorkingTip(message="点赞"):
+    sendMuteMessage(message)
+
+
+# 发送分享期待文本
 def sendShareYourFinish():
-    sendMuteMessage("天青色等烟雨，而我在等你。\r\n{}\r\n期待您今天的分享".format(getOneWord()))
+    arrays = [
+        "每天进步一点点，拥抱幸福是必然。", "每天进步一点点，成长足迹看得见。",
+        "每天进步一点点，波折烦恼都不见。", "每天进步一点点，前进不止一小点。",
+        "每天进步一点点，努力就会到终点。", "每天进步一点点，理想终会被实现。",
+        "每天进步一点点，目标距离缩小点。", "每天进步一点点，成功就会在眼前。",
+        "每天进步一点点，生活幸福比蜜甜。", "每天进步一点点，一切都会圆满点。"
+    ]
+    sendMuteMessage(
+        "天青色等烟雨，而我在等你。\r\n{}\r\n{}\r\n期待您今天的分享@所有人".format(random.choice(arrays), getOneWord()))
+
 
 # 获取金句一句
 def getOneWord():
     rq = requests.get("https://v1.hitokoto.cn/")
     return rq.json()["hitokoto"]
+
 
 ####################################### 长新闻截图 #######################################
 def request_download():
@@ -145,10 +175,12 @@ def request_download():
     print("下载完成")
     wx.SendFiles('./output/allNews.png')
 
+
 ####################################### 人民网截图 #######################################
 def sendScreenshotNews():
     from ScreenShot import getScreenshot
     wx.SendFiles(getScreenshot())
+
 
 def sendScreenshotOne():
     from ScreenWufazhuce import getScreenshot
@@ -163,9 +195,13 @@ def sendScreenshotOne():
 当前所有参数均被写死，因此仅内部使用
 '''
 if __name__ == '__main__':
-    while(True):
+    # 用来判断微信启动时，微信是否正常 但后续并没有再判断了
+    while (True):
+        break
         try:
+            # 校验selenium依赖是否正常运行
             from ScreenWufazhuce import getScreenshot
+
             getScreenshot()
         except Exception as e:
             print(e)
@@ -177,10 +213,10 @@ if __name__ == '__main__':
             ## 加tab避免卡顿导致的搜索失败
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat(WHO_USER)
+            go2TargeChat("文件传输助手")
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat(WHO_USER)
+            go2TargeChat("文件传输助手")
             break
         except Exception as e:
             print(e)
@@ -188,18 +224,19 @@ if __name__ == '__main__':
             time.sleep(1)
             continue
 
-    ## 提醒打卡
+    ## 提醒打卡 定时任务设置
     schedule.every().day.at("07:30").do(sendCheckInTip)
     schedule.every().day.at("07:31").do(sendScreenshotNews)
 
-    ## 提醒为打卡
+    ## 提醒未打卡 定时任务设置
     schedule.every().day.at("08:30").do(request_download)
-    schedule.every().day.at("08:30").do(sendNoCheckInWarming)
+    schedule.every().day.at("08:31").do(sendNoCheckInWarming)
+    # schedule.every(5).seconds.do(getlocalStrTime)
 
-    ## 提醒践行
+    ## 提醒践行 定时任务设置
     schedule.every().day.at("19:59:55").do(sendScreenshotOne)
     schedule.every().day.at("20:00").do(sendShareYourFinish)
 
+    ## 定时任务触发器运行，固定API
     while True:
         schedule.run_pending()
-
