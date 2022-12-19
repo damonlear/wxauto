@@ -6,7 +6,7 @@ block_cipher = None
 added_files = [('I:/workspace/python/wxauto/codes/input', 'input' )]
 
 a = Analysis(
-    ['F03Remind.py', 'ScreenShot.py', 'ScreenWufazhuce.py'],
+    ['F03Remind.py', 'ScreenShot.py', 'ScreenWufazhuce.py', 'ScreenCheckIn.py'],
     pathex=[],
     binaries=[],
     datas=added_files,

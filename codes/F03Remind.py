@@ -194,6 +194,10 @@ def sendScreenshotOne():
     from ScreenWufazhuce import getScreenshot
     wx.SendFiles(getScreenshot())
 
+def sendScreenshotCheckIn():
+    from ScreenCheckIn import getScreenshot
+    wx.SendFiles(getScreenshot())
+
 ####################################### 每周的提醒的函数 #######################################
 
 def getWechatAtGroupMember():
