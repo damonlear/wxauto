@@ -260,10 +260,10 @@ if __name__ == '__main__':
             ## 加tab避免卡顿导致的搜索失败
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat("文件传输助手")
+            go2TargeChat(WHO_USER)
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat("文件传输助手")
+            go2TargeChat(WHO_USER)
             break
         except Exception as e:
             print(e)
