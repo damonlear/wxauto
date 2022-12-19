@@ -58,7 +58,9 @@ def webshot(url, filepath, isFullScreen = True):
     except Exception as e:
         print(filepath, e)
 
-
+'''
+新闻人民日报截图
+'''
 def getScreenshot(url=people_url, filepath=DOWNLOAD_PATH):
     t = time.time()
     # 两个参数，前面url，后面保存地址

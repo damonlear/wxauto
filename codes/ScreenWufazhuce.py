@@ -80,6 +80,9 @@ def webshot(url, filepath, isFullScreen=True):
         print(filepath, e)
         return False
 
+'''
+韩寒ONE截图
+'''
 def getScreenshot():
     t = time.time()
     # 两个参数，前面url，后面保存地址

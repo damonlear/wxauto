@@ -28,6 +28,8 @@ def getUrl():
 
 def webshot(url, filepath, isFullScreen=True):
     print(url)
+    if os.path.isfile(filepath):
+        os.remove(filepath)
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
@@ -45,8 +47,8 @@ def webshot(url, filepath, isFullScreen=True):
         driver.add_cookie(cookies)
         driver.get(link)
         ## 这里不延时可能会导致  Message: no such element: Unable to locate element: {"method":"css selector","selector":"[id="main-container"]"}
-        print("等待加载10秒防止Message: no such element")
-        time.sleep(10)
+        print("等待加载5秒防止Message: no such element")
+        time.sleep(5)
         driver.refresh()
         if(isFullScreen):
             for _ in range(10):
@@ -79,17 +81,18 @@ def webshot(url, filepath, isFullScreen=True):
         print("Process {} get one pic !!!".format(os.getpid()))
         time.sleep(0.1)
 
-        ## 网页抓包的
-        if driver.find_element("id", "main-container").text.find("404 Not Found") >= 0:
-            print("错误" + url)
-            return False
-        else:
-            print("正常")
+        ## 因为文件已经删除了，如果可以下下来就当他成功
+        ## 但是404就不知道,所以如果这里时404等异常也会截图
+        if os.path.isfile(filepath):
+            print("文件存在", filepath)
             return True
     except Exception as e:
-        print(filepath, e)
+        print("异常", filepath, e)
         return False
 
+'''
+打卡网页的截图
+'''
 def getScreenshot():
     t = time.time()
     # 两个参数，前面url，后面保存地址
@@ -106,6 +109,6 @@ if __name__ == '__main__':
     t = time.time()
     # 两个参数，前面url，后面保存地址
     while(True):
-        if(webshot(getUrl(), DOWNLOAD_ONE_PATH, False)):
+        if(webshot(getUrl(), DOWNLOAD_CHECKIN_PATH, False)):
             break
     print("操作结束，耗时：{:.2f}秒".format(float(time.time() - t)))

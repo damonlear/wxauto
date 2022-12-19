@@ -189,11 +189,11 @@ def sendScreenshotNews():
     from ScreenShot import getScreenshot
     wx.SendFiles(getScreenshot())
 
-
+####################################### 韩寒ONE截图 #######################################
 def sendScreenshotOne():
     from ScreenWufazhuce import getScreenshot
     wx.SendFiles(getScreenshot())
-
+####################################### 易效能打卡网站截图 #######################################
 def sendScreenshotCheckIn():
     from ScreenCheckIn import getScreenshot
     wx.SendFiles(getScreenshot())
@@ -223,7 +223,7 @@ def sendSundayJoinMeetingRemind():
 
 def init():
     print("####################################### 共赴热爱F4 2.0践行提醒程序 #######################################")
-    print("####################################### 版本：20221226 #######################################")
+    print("####################################### 版本：V1.3 - 20221226 #######################################")
     print("####################################### 开始程序端初始化完成 #######################################")
     folder = "./input/"
     if not os.path.exists(folder):  # 判断是否存在文件夹如果不存在则创建为文件夹
@@ -284,6 +284,7 @@ if __name__ == '__main__':
     ## 每天提醒未打卡 定时任务
     schedule.every().day.at("08:29").do(request_download)
     schedule.every().day.at("08:30").do(sendNoCheckInWarming)
+    schedule.every().day.at("08:40").do(sendScreenshotCheckIn())
 
     ## 每天提醒践行 定时任务设置
     schedule.every().day.at("19:59:55").do(sendScreenshotOne)
