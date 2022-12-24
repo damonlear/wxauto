@@ -126,18 +126,26 @@ def sendNoCheckInWarming(isSendWechat=True):
             print("WARMING！！！ {}未签到".format(name))
 
     if isSendWechat:
-        sendMuteMessage(
-            "共赴热爱，感恩一路有你！\r\n忘记打卡的小伙伴记得打卡哦 : {}".format(','.join(str(i) for i in notCheckIn)))
+        if len(notCheckIn) >= 0:
+            sendMuteMessage(
+                "共赴热爱，感恩一路有你！\r\n忘记打卡的小伙伴记得打卡哦 : {}".format(','.join(str(i) for i in notCheckIn)))
+        else:
+            sendMuteMessage(
+                "共赴热爱，感恩一路有你！全因有你同行\r\n今天{}位喜党都完成了打卡".format(len(allArray)))
+
 
 
 # 发送提醒今天打卡链接
 def sendCheckInTip():
-    f = open("./input/打卡链接", 'r', encoding='utf-8')
-    lines = f.read()
-    f.close()
-    print(lines)
-    sendMuteMessage("今天是{}，没有记录就没有发生\r\n\r\n{}".format(getlocalStrTime(), lines))
-
+    path = "./input/打卡链接"
+    if os.path.isfile(path):
+        f = open("./input/打卡链接", 'r', encoding='utf-8')
+        lines = f.read()
+        f.close()
+        print(lines)
+        sendMuteMessage("今天是{}，没有记录就没有发生\r\n\r\n{}".format(getlocalStrTime(), lines))
+    else:
+        print("{}文件不存在".format(path))
 
 # 发送点赞文本
 def sendWorkingTip(message="点赞"):
@@ -186,6 +194,29 @@ def sendScreenshotOne():
     from ScreenWufazhuce import getScreenshot
     wx.SendFiles(getScreenshot())
 
+####################################### 每周的提醒的函数 #######################################
+
+def getWechatAtGroupMember():
+    tmplist = ["@所有人 "]
+    for key, value in allArray.items():
+        tmplist.append("{} @{} ".format(key, value))
+    return "，".join(tmplist).strip('，')
+
+def sendSaturdayWriteMeetingRecordRemind():
+    # print("没有记录，就没有发生\r\n今天({})周六，喜党们记得写明天的会议记录哦\r\n{}".format(getlocalStrTime(), getWechatAtGroupMember()))
+    sendMuteMessage("没有记录，就没有发生\r\n今天({})周六，喜党们记得写明天的会议记录哦\r\n明天早会哦，记得写会议记录\r\n{}".format(getlocalStrTime(), getWechatAtGroupMember()))
+
+def sendSundayJoinMeetingRemind():
+    path = "./input/腾讯会议"
+    if os.path.isfile(path):
+        f = open(path, 'r', encoding='utf-8')
+        lines = f.read()
+        f.close()
+        print(lines)
+        sendMuteMessage("{}\r\n{}".format(lines, getWechatAtGroupMember()))
+    else:
+        print("{}文件不存在".format(path))
+
 ####################################### 主程序 #######################################
 '''
 超凡04组打卡提醒主程序
@@ -212,10 +243,10 @@ if __name__ == '__main__':
             ## 加tab避免卡顿导致的搜索失败
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat(WHO_USER)
+            go2TargeChat("文件传输助手")
             wx.SearchBox.SendKeys('{Tab}')
             wx.SearchBox.SendKeys('{Tab}')
-            go2TargeChat(WHO_USER)
+            go2TargeChat("文件传输助手")
             break
         except Exception as e:
             print(e)
@@ -223,7 +254,8 @@ if __name__ == '__main__':
             time.sleep(1)
             continue
 
-    ## 提醒打卡 定时任务设置
+    ####################################### 每天的日常提醒 #######################################
+
     schedule.every().day.at("07:15").do(sendCheckInTip)
     schedule.every().day.at("07:16").do(sendScreenshotNews)
 
@@ -234,6 +266,15 @@ if __name__ == '__main__':
     ## 提醒践行 定时任务设置
     schedule.every().day.at("19:59:55").do(sendScreenshotOne)
     schedule.every().day.at("20:00").do(sendShareYourFinish)
+
+    ####################################### 每周的提醒 #######################################
+    ## 提醒周6写会议纪要
+    schedule.every().saturday.at("18:00").do(sendSaturdayWriteMeetingRecordRemind)
+    ## 提醒周6把会议通知提醒发出来
+    schedule.every().saturday.at("19:30").do(sendSundayJoinMeetingRemind)
+
+    ## 提醒周天开会
+    schedule.every().sunday.at("06:20").do(sendSundayJoinMeetingRemind)
 
     ## 定时任务触发器运行，固定API
     while True:
