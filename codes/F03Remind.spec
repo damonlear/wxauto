@@ -3,12 +3,13 @@
 
 block_cipher = None
 
+added_files = [('I:/workspace/python/wxauto/codes/input', 'input' )]
 
 a = Analysis(
     ['F03Remind.py', 'ScreenShot.py', 'ScreenWufazhuce.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=added_files,
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
