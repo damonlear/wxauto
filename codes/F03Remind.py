@@ -217,6 +217,28 @@ def sendSundayJoinMeetingRemind():
     else:
         print("{}文件不存在".format(path))
 
+def init():
+    folder = "./input/"
+    if not os.path.exists(folder):  # 判断是否存在文件夹如果不存在则创建为文件夹
+        print("{}文件不存在，创建文件夹".format(folder))
+        os.makedirs(folder)
+    folder = "./output/"
+    if not os.path.exists(folder):  # 判断是否存在文件夹如果不存在则创建为文件夹
+        print("{}文件不存在，创建文件夹".format(folder))
+        os.makedirs(folder)
+
+    # 用来判断微信启动时，微信是否正常 但后续并没有再判断了
+    while (True):
+        try:
+            # 校验selenium依赖是否正常运行
+            from ScreenWufazhuce import getScreenshot
+            getScreenshot()
+        except Exception as e:
+            print(e)
+            print("Chrome浏览器驱动异常")
+            time.sleep(1)
+            continue
+
 ####################################### 主程序 #######################################
 '''
 超凡04组打卡提醒主程序
@@ -226,19 +248,8 @@ def sendSundayJoinMeetingRemind():
 当前所有参数均被写死，因此仅内部使用
 '''
 if __name__ == '__main__':
-    # 用来判断微信启动时，微信是否正常 但后续并没有再判断了
+    init()
     while (True):
-        try:
-            # 校验selenium依赖是否正常运行
-            from ScreenWufazhuce import getScreenshot
-
-            getScreenshot()
-        except Exception as e:
-            print(e)
-            print("Chrome浏览器驱动异常")
-            time.sleep(1)
-            continue
-
         try:
             ## 加tab避免卡顿导致的搜索失败
             wx.SearchBox.SendKeys('{Tab}')
@@ -255,7 +266,6 @@ if __name__ == '__main__':
             continue
 
     ####################################### 每天的日常提醒 #######################################
-
     schedule.every().day.at("07:15").do(sendCheckInTip)
     schedule.every().day.at("07:16").do(sendScreenshotNews)
 
