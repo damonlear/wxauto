@@ -233,11 +233,14 @@ def init():
             # 校验selenium依赖是否正常运行
             from ScreenWufazhuce import getScreenshot
             getScreenshot()
+            break
         except Exception as e:
+            print("Chrome浏览器驱动异常,必须装chrome浏览器")
             print(e)
-            print("Chrome浏览器驱动异常")
             time.sleep(1)
             continue
+
+    print("####################################### 初始化文件目录及Chrome浏览器驱动驱动完成 #######################################")
 
 ####################################### 主程序 #######################################
 '''
@@ -261,7 +264,7 @@ if __name__ == '__main__':
             break
         except Exception as e:
             print(e)
-            print("微信客户端未打开，请打开Windows微信客户端口到前台")
+            print("####################################### 微信客户端未打开，请打开Windows微信客户端口到前台 #######################################")
             time.sleep(1)
             continue
 

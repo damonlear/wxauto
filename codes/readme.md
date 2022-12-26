@@ -4,7 +4,7 @@
 https://www.cnblogs.com/bbiu/p/13209612.html
 
 %windir%\System32\cmd.exe "/K" E:\Anaconda3\Scripts\activate.bat E:\Anaconda3
-pyinstaller -F F03Remind.py
+pyinstaller -D F03Remind.py
 修改spec
 I:\workspace\python\wxauto\codes>pyinstaller
 
@@ -15,8 +15,8 @@ I:\workspace\python\wxauto\codes>pyinstaller
 
 - 1.执行命令，xxx.py为程序入口文件
 
-      pyinstall -F xxx.py 
-      pyinstaller -F F03Remind.py
+      pyinstall -D xxx.py 
+      pyinstaller -D F03Remind.py
 
 - 2.删除生成的bulid和dist文件夹,仅保留xxx.spec文件
 
